@@ -26,8 +26,8 @@ def orbital_split(lts,nbasis,nbuse):
 def orb_extraction_info(filename1):
     NBasis = 0
     NBuse=0
-    with open(filename1,'r') as origin:
-        for line in origin:
+    with open(filename1,'r') as fila:
+        for line in fila:
             if  "Number of basis functions" in line:
               words = line.split()
               for i in words:
