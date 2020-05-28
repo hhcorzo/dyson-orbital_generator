@@ -2,7 +2,6 @@
 
 import sys
 import getopt
-import math
 import numpy as np
 
 def st_to_sci(n):
