@@ -4,6 +4,7 @@ Using the MO in a fchk file and a file with the Feynman-Dyson amplitudes (FDA) i
 This script needs python 3 and the getopt, numpy, and sys libraries.
 You can run this script in terminal as follows:
 
-dyson_orbitals.py MO.fchk FDA.log 1
-
+$ python dyson_orbitals.py <arg1> <arg2> <arg3> <br>
+<b>Example</b>
+$ python dyson_orbitals.py MO.fchk FDA.log
 the output generated in this case is dyson_orbs_MO.fchk
