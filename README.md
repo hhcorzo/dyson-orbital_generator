@@ -5,6 +5,6 @@ This script needs python 3 and the getopt, numpy, and sys libraries.
 You can run this script in terminal as follows:
 
 $ python dyson_orbitals.py <arg1> <arg2> <arg3> <br>
-<b>Example</b>
-$ python dyson_orbitals.py MO.fchk FDA.log
+<b>Example</b> <br>
+$ python dyson_orbitals.py MO.fchk FDA.log <br>
 the output generated in this case is dyson_orbs_MO.fchk
