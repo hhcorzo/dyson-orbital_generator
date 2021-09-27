@@ -4,70 +4,7 @@ import sys
 import getopt
 import numpy as np
 
-
-def st_to_sci(n: int) -> float:
-    """Transform string to scientific notation"""
-    return "%.8E" % float(n)
-
-
-def chunks(lst: list, n: int) -> iter:
-    """Yield successive n-sized chunks from lst."""
-    for i in range(0, len(lst), n):
-        yield lst[i : i + n]
-
-
-def orbital_split(lts: list, nbasis: int, nbuse: int) -> dict:
-    """This routine generate the dictionaries for the creation of the Dyson orbitals"""
-    orbs = {}
-    for i, x in enumerate(chunks(lts, nbasis), 1):
-        if len(x) == nbasis:
-            orbs[i] = x
-        else:
-            sys.exit("Orbital", i, "has less elements than nbasis")
-    if len(orbs) != nbuse:
-        sys.exit("Number of orbitals extracted no equal to Nbuse")
-    return orbs
-
-
-def orb_extraction_info(filename1: str) -> tuple:
-    """ This routine extract the orbitals from the SCF"""
-    NBasis = 0
-    NBuse = 0
-    with open(filename1, "r") as fila:
-        for line in fila:
-            if "Number of basis functions" in line:
-                words = line.split()
-                for i in words:
-                    for letter in i:
-                        if letter.isdigit():
-                            NBasis = NBasis * 10 + int(letter)
-            elif "Number of independent functions" in line:
-                words = line.split()
-                for i in words:
-                    for letter in i:
-                        if letter.isdigit():
-                            NBuse = NBuse * 10 + int(letter)
-            if NBasis > 0 and NBuse > 0:
-                return NBasis, NBuse
-
-
-def amp_extraction_info(filename2: str) -> tuple:
-    """This routine extracts the basis and orbital information from the  file with the  Feynman-Dyson"""
-    NBasis = 0
-    NBuse = 0
-    with open(filename2, "r") as origin:
-        for line in origin:
-            if "NBasis=" in line:
-                words = line.split()
-                # print(words)
-                NBasis = int(words[1])
-                if words[6] == "NFC=":
-                    NFC = int(words[7])
-            elif "NROrb=" in line:
-                words = line.split()
-                NBuse = int(words[1])
-            if NBasis > 0 and NBuse > 0:
-                return NBasis, NBuse, NFC
+from utils import *
 
 
 def extract_orbitals(filename1: str) -> tuple:
@@ -175,15 +112,16 @@ def writting_new_fchk(
     NBasisorb: int,
     NBuseorb: int,
 ) -> bool:
-    # filename1: fchk file with the info needed to build the M.O
-    # orbtochange: Orbital that will be changed in the fchk
-    # DysonMO : Dyson orbitals in the M.O. basis
-    # orbcoff: original fchk orbital coeff C(Nbasis,NBuse)
-    # NBasisorb:  original fchk NBasis
-    # NBuseorb: original fchk NBused sometimes equal to NOrb but not always
-    # NBasisDy: Nbasis reported in the output with the FEYNMAN-DYSON AMPLITUDES
-    # NOrbDy:  Norb reported in the output with the FEYNMAN-DYSON AMPLITUDES
-
+    """ This is the main routine that write the fchk for the Dyson orbitals. 
+   filename1: fchk file with the info needed to build the M.O
+   orbtochange: Orbital that will be changed in the fchk
+   DysonMO : Dyson orbitals in the M.O. basis
+   orbcoff: original fchk orbital coeff C(Nbasis,NBuse)
+   NBasisorb:  original fchk NBasis
+   NBuseorb: original fchk NBused sometimes equal to NOrb but not always
+   NBasisDy: Nbasis reported in the output with the FEYNMAN-DYSON AMPLITUDES
+   NOrbDy:  Norb reported in the output with the FEYNMAN-DYSON AMPLITUDES
+   """
     # In the original fchk file there are NBuseorb orbitals
     orb_elems = NBasisorb * NBasisorb
     orb_lines = int(orb_elems / 5)
@@ -230,12 +168,12 @@ def writting_new_fchk(
 
 
 def dyson_formation(filename1: str, filename2: str, normal: int) -> bool:
-    """This routine generates the fchk with the Dyson orbitals"""
-    # filename1: fchk file with the info needed to build the M.O
-    # filename2: file with the Feynman-Dyson amplitudes in the M.O. basis
-    # normal: The normalization of the Dyson orbital if equal to 0 the normalization will be the P.S; equal to 1 the normalization is the unity.
-    #
-    #
+    """This routine generates the fchk with the Dyson orbitals
+     filename1: fchk file with the info needed to build the M.O
+     filename2: file with the Feynman-Dyson amplitudes in the M.O. basis
+     normal: The normalization of the Dyson orbital if equal to 0 the normalization will be the P.S; equal to 1 the normalization is the unity.
+    """
+
     orb_coff, NBasis_orb, NBuse_orb = extract_orbitals(filename1)
     orb_amp, orb_ps, NBasis_dy, NOrb_dy, NFC = extract_amplitudes(filename2)
     #
